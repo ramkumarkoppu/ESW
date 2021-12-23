@@ -1,4 +1,4 @@
-15:48:46 **** Build of configuration Debug for project NUCLEO-F767ZI ****
+16:00:04 **** Build of configuration Debug for project NUCLEO-F767ZI ****
 make -j12 all 
 arm-none-eabi-gcc "../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F767xx -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.d" -MT"Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.o"
 arm-none-eabi-gcc "../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c" -mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F767xx -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.d" -MT"Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.o"
@@ -32,24 +32,17 @@ arm-none-eabi-size   NUCLEO-F767ZI.elf
 arm-none-eabi-objdump -h -S  NUCLEO-F767ZI.elf  > "NUCLEO-F767ZI.list"
 arm-none-eabi-objcopy  -O binary  NUCLEO-F767ZI.elf  "NUCLEO-F767ZI.bin"
    text	   data	    bss	    dec	    hex	filename
-  11332	     20	   1700	  13052	   32fc	NUCLEO-F767ZI.elf
+  11044	     20	   1700	  12764	   31dc	NUCLEO-F767ZI.elf
 Finished building: default.size.stdout
- 
-Finished building: NUCLEO-F767ZI.bin
  
 Finished building: NUCLEO-F767ZI.list
  
-15:48:58 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
-make -j12 all 
-arm-none-eabi-size   NUCLEO-F767ZI.elf 
-   text	   data	    bss	    dec	    hex	filename
-  11332	     20	   1700	  13052	   32fc	NUCLEO-F767ZI.elf
-Finished building: default.size.stdout
+Finished building: NUCLEO-F767ZI.bin
  
-15:52:11 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
+16:00:24 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
 make -j12 all 
 arm-none-eabi-size   NUCLEO-F767ZI.elf 
    text	   data	    bss	    dec	    hex	filename
-  11332	     20	   1700	  13052	   32fc	NUCLEO-F767ZI.elf
+  11044	     20	   1700	  12764	   31dc	NUCLEO-F767ZI.elf
 Finished building: default.size.stdout
  
