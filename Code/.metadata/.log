@@ -1150,3 +1150,6 @@ org.eclipse.equinox.p2.core.ProvisionException: No repository found at http://sw
 
 !ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2021-12-23 15:49:06.967
 !MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 16000000; div: 8
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2021-12-23 15:52:20.428
+!MESSAGE SWV configuration; base: 36000000; minDiv: 18; maxDiv: 65535; maxSWO: 2000000; limit: 2000000 => SWO: 2000000; CPU: 16000000; div: 8
