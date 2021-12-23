@@ -75,8 +75,8 @@ all: main-build
 main-build: NUCLEO-F767ZI.elf secondary-outputs
 
 # Tool invocations
-NUCLEO-F767ZI.elf: $(OBJS) $(USER_OBJS) D:\TinyRL\Code\STM32\NUCLEO-F767ZI\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "NUCLEO-F767ZI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"D:\TinyRL\Code\STM32\NUCLEO-F767ZI\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NUCLEO-F767ZI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+NUCLEO-F767ZI.elf: $(OBJS) $(USER_OBJS) C:\Practise\GitHub\NUCLEO-F767ZI-ESW\Code\NUCLEO-F767ZI\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "NUCLEO-F767ZI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Practise\GitHub\NUCLEO-F767ZI-ESW\Code\NUCLEO-F767ZI\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NUCLEO-F767ZI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
