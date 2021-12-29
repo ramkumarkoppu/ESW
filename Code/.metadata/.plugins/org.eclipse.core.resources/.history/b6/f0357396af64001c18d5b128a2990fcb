@@ -1,0 +1,20 @@
+/*
+ * main.cpp
+ *
+ *  Created on: Dec 24, 2021
+ *      Author: rkoppu
+ */
+#include <cstdint>
+#include "stm32f7xx_hal.h"
+
+int main(void)
+{
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
+
+	return 0;
+}
+
+
+
+

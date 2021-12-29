@@ -1,0 +1,21 @@
+/*
+ * main.h
+ *
+ *  Created on: Dec 24, 2021
+ *      Author: rkoppu
+ */
+
+#ifndef INC_MAIN_H_
+#define INC_MAIN_H_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+extern UART_HandleTypeDef huart3;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* INC_MAIN_H_ */

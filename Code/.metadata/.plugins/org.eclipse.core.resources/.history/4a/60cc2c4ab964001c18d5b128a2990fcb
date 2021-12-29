@@ -1,0 +1,15 @@
+/*
+ * msp.cpp
+ *
+ *  Created on: Dec 24, 2021
+ *      Author: rkoppu
+ */
+
+/* Low level Processor specific initialization */
+extern "C" void HAL_MspInit(void)
+{
+
+}
+
+
+

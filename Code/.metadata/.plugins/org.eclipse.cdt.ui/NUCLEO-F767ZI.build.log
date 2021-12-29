@@ -1,10 +1,10 @@
-10:59:23 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
+10:09:54 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
 make -j12 all 
 arm-none-eabi-size   NUCLEO-F767ZI.elf 
    text	   data	    bss	    dec	    hex	filename
-  11408	     20	   1700	  13128	   3348	NUCLEO-F767ZI.elf
+   7412	     20	   1700	   9132	   23ac	NUCLEO-F767ZI.elf
 Finished building: default.size.stdout
  
 
-10:59:23 Build Finished. 0 errors, 0 warnings. (took 566ms)
+10:09:55 Build Finished. 0 errors, 0 warnings. (took 658ms)
 

@@ -1,0 +1,17 @@
+/*
+ * main.cpp
+ *
+ *  Created on: Dec 24, 2021
+ *      Author: rkoppu
+ */
+#include <cstdint>
+#include "stm32f7xx_hal.h"
+
+std::int32_t main(void)
+{
+	return 0;
+}
+
+
+
+

@@ -1,0 +1,42 @@
+/*
+ * main.cpp
+ *
+ *  Created on: Dec 24, 2021
+ *      Author: rkoppu
+ */
+#include <cstdint>
+#include "stm32f7xx_hal.h"
+
+static void SystemClock_Config(void);
+static void UART3_Init(void);
+
+int main(void)
+{
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
+
+	/* Configure the system clock */
+	SystemClock_Config();
+
+	/* Configure the UART */
+	UART3_Init();
+
+	while(true)
+	{
+
+	}
+
+	return 0;
+}
+
+static void SystemClock_Config(void)
+{
+
+}
+
+/* USART3 Initialization Function */
+static void UART3_Init(void)
+{
+
+}
+
