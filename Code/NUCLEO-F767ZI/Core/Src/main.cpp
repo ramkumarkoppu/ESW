@@ -10,10 +10,12 @@
 
 UART_HandleTypeDef huart3;
 
+static char recv_data[64];
+std::uint8_t cnt{0};
+
 static void SystemClock_Config( void );
 static void UART3_Init( void );
 static void Error_Handler( void );
-
 static inline char convert_to_Upper(char c);
 
 int main( void )
@@ -34,33 +36,7 @@ int main( void )
 		Error_Handler();
 	}
 
-	char recv_data[64]{0};
-	std::uint8_t cnt{0};
-	for ( ; cnt < ( sizeof(recv_data) / sizeof(recv_data[0]) ); cnt++)
-	{
-		if ( HAL_UART_Receive(&huart3, (std::uint8_t *)&recv_data[cnt], 1, HAL_MAX_DELAY) != HAL_OK )
-		{
-			// Error in Reception.
-			Error_Handler();
-		}
-		else
-		{
-			recv_data[cnt] = convert_to_Upper( recv_data[cnt] );
-		}
-
-		if (recv_data[cnt] == '\r')
-		{
-			break;
-		}
-	}
-	cnt++;
-	recv_data[cnt] = '\n';
-
-	if ( HAL_UART_Transmit( &huart3, (const std::uint8_t *)recv_data, cnt, HAL_MAX_DELAY ) != HAL_OK )
-	{
-		// Error in Transmission.
-		Error_Handler();
-	}
+	HAL_UART_Receive_IT(&huart3, (std::uint8_t *)&recv_data[cnt], 1);
 
 	while(true)
 	{
@@ -68,6 +44,45 @@ int main( void )
 	}
 
 	return 0;
+}
+
+/**
+  * @brief  Rx Transfer completed callback.
+  * @param  huart UART handle.
+  * @retval None
+  */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if ( (recv_data[cnt] != '\r') && (cnt < ( sizeof(recv_data) / sizeof(recv_data[0]))) )
+	{
+		cnt++;
+		HAL_UART_Receive_IT(&huart3, (std::uint8_t *)&recv_data[cnt], 1);
+	}
+	else
+	{
+		for (std::uint8_t i{0}; i < cnt; i++)
+		{
+			recv_data[i] = convert_to_Upper( recv_data[i] );
+		}
+		cnt++;
+		recv_data[cnt] = '\n';
+
+		if ( HAL_UART_Transmit_IT( &huart3, (const std::uint8_t *)recv_data, cnt) != HAL_OK )
+		{
+			// Error in Transmission.
+			Error_Handler();
+		}
+	}
+}
+
+/**
+  * @brief  Tx Transfer completed callback.
+  * @param  huart UART handle.
+  * @retval None
+  */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+
 }
 
 static void SystemClock_Config( void )
