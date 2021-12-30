@@ -134,7 +134,6 @@ static void SystemClock_Config( void )
 /* USART3 Initialization Function */
 static void UART3_Init( void )
 {
-	std::memset( &huart3, 0, sizeof(huart3) );
 	/* UART High level initilization */
 	huart3.Instance = USART3;
 

@@ -6,7 +6,7 @@
  */
 #include <cstdint>
 #include <cstring>
-#include <cstdio>
+#include <cstdint>
 #include "main.h"
 
 UART_HandleTypeDef huart3;
@@ -20,7 +20,7 @@ static void displayClkInfo( void );
 static void UART3_Init( void );
 static void Error_Handler( void );
 #ifdef USE_UART_EXAMPLE
-static inline char convert_to_Upper( char c );
+static inline char convert_to_Upper(char c);
 #endif // USE_UART_EXAMPLE
 
 int main( void )
@@ -28,11 +28,11 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-	// Print current settings of clocks.
-	displayClkInfo();
-
 	/* Configure the system clock */
 	SystemClock_Config();
+
+	/* Configure the UART for debug console */
+	UART3_Init();
 
 #ifdef USE_UART_EXAMPLE
 	const char *pMsg = "Hello, how are you?\r";
@@ -62,12 +62,12 @@ int main( void )
   * @param  huart UART handle.
   * @retval None
   */
-void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if ( (recv_data[cnt] != '\r') && (cnt < ( sizeof(recv_data) / sizeof(recv_data[0]))) )
 	{
 		cnt++;
-		HAL_UART_Receive_IT( &huart3, (std::uint8_t *)&recv_data[cnt], 1 );
+		HAL_UART_Receive_IT(&huart3, (std::uint8_t *)&recv_data[cnt], 1);
 	}
 	else
 	{
@@ -91,7 +91,7 @@ void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart )
   * @param  huart UART handle.
   * @retval None
   */
-void HAL_UART_TxCpltCallback( UART_HandleTypeDef *huart )
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 
 }
@@ -125,16 +125,11 @@ static void SystemClock_Config( void )
 
 	// Disable HSI
 	__HAL_RCC_HSI_DISABLE();
-
-	// Configure SysTick with new clock settings.
-	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
-	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
 }
 
 /* USART3 Initialization Function */
 static void UART3_Init( void )
 {
-	std::memset( &huart3, 0, sizeof(huart3) );
 	/* UART High level initilization */
 	huart3.Instance = USART3;
 
@@ -149,7 +144,7 @@ static void UART3_Init( void )
 
 	huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
 
-	if (HAL_UART_Init( &huart3 ) != HAL_OK)
+	if (HAL_UART_Init(&huart3) != HAL_OK)
 	{
 		// Initialization Error.
 		Error_Handler();
@@ -157,7 +152,7 @@ static void UART3_Init( void )
 }
 
 #ifdef USE_UART_EXAMPLE
-static inline char convert_to_Upper( char c )
+static inline char convert_to_Upper(char c)
 {
 	char retVal{c};
 
@@ -179,16 +174,7 @@ static void displayClkInfo( void )
 {
 	char msg[1024];
 
-	/* Configure the UART for debug console */
-	UART3_Init();
-
-	std::sprintf (msg, "SYSCLK:%luMHZ\r\n", ( HAL_RCC_GetSysClockFreq() / 1000000 ) );
-	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
-	std::sprintf( msg, "HCLK:%luMHZ\r\n", ( HAL_RCC_GetHCLKFreq() / 1000000 ) );
-	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
-	std::sprintf( msg, "PCLK1:%luMHZ\r\n", ( HAL_RCC_GetPCLK1Freq() / 1000000 ) );
-	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
-	std::sprintf( msg, "PCLK2:%luMHZ\r\n", ( HAL_RCC_GetPCLK2Freq() / 1000000 ) );
-	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
+	sprintf(msg, "SYSCLK:%lu\r\n", HAL_RCC_GetSysClockFreq() );
+	HAL_UART_Transmit(&huart3, msg, std::strlen(msg), HAL_MAX_DELAY );
 }
 
