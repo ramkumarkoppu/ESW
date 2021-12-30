@@ -2065,3 +2065,8 @@ java.util.ConcurrentModificationException
 
 2021-12-28 15:34:06,653 [INFO] Activator:178 - !SESSION log4j initialized
 2021-12-28 15:34:12,236 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com
+2021-12-30 10:21:56,618 [INFO] Activator:177 - 
+
+
+2021-12-30 10:21:56,620 [INFO] Activator:178 - !SESSION log4j initialized
+2021-12-30 10:22:06,685 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com

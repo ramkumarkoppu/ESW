@@ -29,6 +29,7 @@ int main( void )
 	/* Configure the UART for debug console */
 	UART3_Init();
 
+#ifdef USE_UART_EXAMPLE
 	const char *pMsg = "Hello, how are you?\r";
 	if ( HAL_UART_Transmit( &huart3, (const std::uint8_t *)pMsg, std::strlen(pMsg), HAL_MAX_DELAY ) != HAL_OK )
 	{
@@ -37,6 +38,7 @@ int main( void )
 	}
 
 	HAL_UART_Receive_IT(&huart3, (std::uint8_t *)&recv_data[cnt], 1);
+#endif // USE_UART_EXAMPLE
 
 	while(true)
 	{
@@ -46,6 +48,7 @@ int main( void )
 	return 0;
 }
 
+#ifdef USE_UART_EXAMPLE
 /**
   * @brief  Rx Transfer completed callback.
   * @param  huart UART handle.
@@ -85,6 +88,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
 }
 
+#endif // USE_UART_EXAMPLE
+
 static void SystemClock_Config( void )
 {
 
@@ -114,6 +119,7 @@ static void UART3_Init( void )
 	}
 }
 
+#ifdef USE_UART_EXAMPLE
 static inline char convert_to_Upper(char c)
 {
 	char retVal{c};
@@ -125,6 +131,7 @@ static inline char convert_to_Upper(char c)
 
 	return retVal;
 }
+#endif // USE_UART_EXAMPLE
 
 static void Error_Handler( void )
 {
