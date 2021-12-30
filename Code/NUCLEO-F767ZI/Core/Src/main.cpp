@@ -28,10 +28,8 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-#ifdef USE_HSE_EXAMPLE
 	// Print current settings of clocks.
 	displayClkInfo();
-#endif // USE_HSE_EXAMPLE
 
 	/* Configure the system clock */
 	SystemClock_Config();
@@ -47,8 +45,10 @@ int main( void )
 	HAL_UART_Receive_IT(&huart3, (std::uint8_t *)&recv_data[cnt], 1);
 #endif // USE_UART_EXAMPLE
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 	// Print current settings of clocks.
 	displayClkInfo();
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
 	while(true)
 	{
@@ -133,6 +133,63 @@ static void SystemClock_Config( void )
 	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
 	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
 #endif // USE_HSE_EXAMPLE
+
+#ifdef USE_PLL_EXAMPLE
+	// Configure the Clock Source.
+	RCC_OscInitTypeDef Osc_init{0};
+	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+	Osc_init.HSIState = RCC_HSI_ON;
+	Osc_init.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+	Osc_init.PLL.PLLState = RCC_PLL_ON;
+	/* Configure PLL to generate 50MHz clock for SYSCLK. */
+//	Osc_init.PLL.PLLM = 16;
+//	Osc_init.PLL.PLLN = 100;
+//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
+	/* End of 50Mhz specific configuration */
+	/* Configure PLL to generate 84MHz clock for SYSCLK. */
+//	Osc_init.PLL.PLLM = 16;
+//	Osc_init.PLL.PLLN = 168;
+//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
+	/* End of 84Mhz specific configuration */
+	/* Configure PLL to generate 120MHz clock for SYSCLK. */
+	Osc_init.PLL.PLLM = 16;
+	Osc_init.PLL.PLLN = 240;
+	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
+	/* End of 120Mhz specific configuration */
+	Osc_init.PLL.PLLQ = 2;
+	Osc_init.PLL.PLLR = 2;
+	if ( HAL_RCC_OscConfig(&Osc_init) != HAL_OK )
+	{
+		// Error in Oscillator or PLL configuration.
+		Error_Handler();
+	}
+
+	// Configure the various clocks.
+	RCC_ClkInitTypeDef Clk_init{0};
+	Clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	Clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1; // for 50, 84 and 120Mhz configurations.
+	//Clk_init.APB1CLKDivider = RCC_HCLK_DIV2;	// for 50 and 84 configurations.
+	Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 128HHz configuration.
+	Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 50, 84 and 128MHz configurations.
+	std::uint32_t flash_latency{FLASH_LATENCY_0};
+	//flash_latency = FLASH_LATENCY_1; // for 50MHz configuration.
+	//flash_latency = FLASH_LATENCY_2; // for 84MHz configuration.
+	flash_latency = FLASH_LATENCY_4; // for 120MHz configuration.
+	if ( HAL_RCC_ClockConfig( &Clk_init, flash_latency ) != HAL_OK )
+	{
+		// Error in Clock configuration.
+		Error_Handler();
+	}
+
+	// Disable HSI
+	__HAL_RCC_HSI_DISABLE();
+
+	// Configure SysTick with new clock settings.
+	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
+	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
+#endif // USE_PLL_EXAMPLE
 }
 
 /* USART3 Initialization Function */
