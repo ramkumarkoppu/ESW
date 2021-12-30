@@ -28,10 +28,8 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-#ifdef USE_HSE_EXAMPLE
 	// Print current settings of clocks.
 	displayClkInfo();
-#endif // USE_HSE_EXAMPLE
 
 	/* Configure the system clock */
 	SystemClock_Config();

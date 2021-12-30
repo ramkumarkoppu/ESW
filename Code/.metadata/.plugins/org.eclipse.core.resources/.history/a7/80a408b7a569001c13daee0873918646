@@ -28,10 +28,8 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-#ifdef USE_HSE_EXAMPLE
 	// Print current settings of clocks.
 	displayClkInfo();
-#endif // USE_HSE_EXAMPLE
 
 	/* Configure the system clock */
 	SystemClock_Config();
@@ -102,7 +100,6 @@ void HAL_UART_TxCpltCallback( UART_HandleTypeDef *huart )
 
 static void SystemClock_Config( void )
 {
-#ifdef USE_HSE_EXAMPLE
 	// Configure the Clock Source.
 	RCC_OscInitTypeDef Osc_init{0};
 	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
@@ -132,7 +129,6 @@ static void SystemClock_Config( void )
 	// Configure SysTick with new clock settings.
 	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
 	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
-#endif // USE_HSE_EXAMPLE
 }
 
 /* USART3 Initialization Function */
