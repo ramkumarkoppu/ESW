@@ -9,14 +9,17 @@
 #include "main.h"
 
 UART_HandleTypeDef huart3;
-
+#ifdef USE_UART_EXAMPLE
 static char recv_data[64];
 std::uint8_t cnt{0};
+#endif // USE_UART_EXAMPLE
 
 static void SystemClock_Config( void );
 static void UART3_Init( void );
 static void Error_Handler( void );
+#ifdef USE_UART_EXAMPLE
 static inline char convert_to_Upper(char c);
+#endif // USE_UART_EXAMPLE
 
 int main( void )
 {
@@ -92,6 +95,16 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
 static void SystemClock_Config( void )
 {
+	RCC_OscInitTypeDef Osc_init{0};
+	// Configure the Clock Source.
+	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+	Osc_init.HSEState = RCC_HSE_BYPASS;
+	if ( HAL_RCC_OscConfig(&Osc_init) != HAL_OK )
+	{
+		// Error in Oscillator configuration.
+		Error_Handler();
+	}
+
 
 }
 
@@ -137,3 +150,4 @@ static void Error_Handler( void )
 {
 	for (;;);
 }
+
