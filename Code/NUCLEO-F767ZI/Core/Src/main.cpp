@@ -137,11 +137,11 @@ static void SystemClock_Config( void )
 #ifdef USE_PLL_EXAMPLE
 	// Configure the Clock Source.
 	RCC_OscInitTypeDef Osc_init{0};
-	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-	Osc_init.HSIState = RCC_HSI_ON;
-	Osc_init.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-	Osc_init.PLL.PLLState = RCC_PLL_ON;
+//	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+//	Osc_init.HSIState = RCC_HSI_ON;
+//	Osc_init.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+//	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+//	Osc_init.PLL.PLLState = RCC_PLL_ON;
 	/* Configure PLL to generate 50MHz clock for SYSCLK. */
 //	Osc_init.PLL.PLLM = 16;
 //	Osc_init.PLL.PLLN = 100;
@@ -153,8 +153,23 @@ static void SystemClock_Config( void )
 //	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
 	/* End of 84Mhz specific configuration */
 	/* Configure PLL to generate 120MHz clock for SYSCLK. */
-	Osc_init.PLL.PLLM = 16;
-	Osc_init.PLL.PLLN = 240;
+//	Osc_init.PLL.PLLM = 16;
+//	Osc_init.PLL.PLLN = 240;
+//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
+	/* End of 120Mhz specific configuration */
+	/* Configure PLL to generate 216MHz clock for SYSCLK using HSE as source. */
+
+	// This configuration requires Power Scale 1 and Over drive ON.
+	__HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
+	__HAL_PWR_OVERDRIVE_ENABLE();
+
+	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+	Osc_init.HSEState = RCC_HSE_BYPASS;
+	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+	Osc_init.PLL.PLLState = RCC_PLL_ON;
+	Osc_init.PLL.PLLM = 4;
+	Osc_init.PLL.PLLN = 216;
 	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
 	/* End of 120Mhz specific configuration */
 	Osc_init.PLL.PLLQ = 2;
@@ -169,14 +184,19 @@ static void SystemClock_Config( void )
 	RCC_ClkInitTypeDef Clk_init{0};
 	Clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	Clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1; // for 50, 84 and 120Mhz configurations.
+	//Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1; // for 50, 84 and 120Mhz configurations.
 	//Clk_init.APB1CLKDivider = RCC_HCLK_DIV2;	// for 50 and 84 configurations.
-	Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 128HHz configuration.
-	Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 50, 84 and 128MHz configurations.
+	//Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 128HHz configuration.
+	//Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 50, 84 and 128MHz configurations.
 	std::uint32_t flash_latency{FLASH_LATENCY_0};
 	//flash_latency = FLASH_LATENCY_1; // for 50MHz configuration.
 	//flash_latency = FLASH_LATENCY_2; // for 84MHz configuration.
-	flash_latency = FLASH_LATENCY_4; // for 120MHz configuration.
+	// for 216MHz configuration.
+	Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 54HHz PCLK1.
+	Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 108HHz PCLK2.
+//	flash_latency = FLASH_LATENCY_4; // for 120MHz configuration.
+	flash_latency = FLASH_LATENCY_7; // for 216MHz configuration.
 	if ( HAL_RCC_ClockConfig( &Clk_init, flash_latency ) != HAL_OK )
 	{
 		// Error in Clock configuration.
