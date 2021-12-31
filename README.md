@@ -1,1 +1,2 @@
-The Embedded Development platforms I use for most my work on Tiny Machine Learning (TinyML).
+The Embedded Development platform(s) I use Tiny Machine Learning (TinyML) related experiments.
+
