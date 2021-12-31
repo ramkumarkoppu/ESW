@@ -15,10 +15,8 @@ static char recv_data[64];
 std::uint8_t cnt{0};
 #endif // USE_UART_EXAMPLE
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void SystemClock_Config( void );
 static void displayClkInfo( void );
-#endif
 static void UART3_Init( void );
 static void Error_Handler( void );
 #ifdef USE_UART_EXAMPLE
@@ -30,13 +28,11 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 	// Print current settings of clocks.
 	displayClkInfo();
 
 	/* Configure the system clock */
 	SystemClock_Config();
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
 #ifdef USE_UART_EXAMPLE
 	const char *pMsg = "Hello, how are you?\r";
@@ -260,7 +256,6 @@ static void Error_Handler( void )
 	for (;;);
 }
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void displayClkInfo( void )
 {
 	char msg[1024];
@@ -277,4 +272,4 @@ static void displayClkInfo( void )
 	std::sprintf( msg, "PCLK2:%luMHZ\r\n", ( HAL_RCC_GetPCLK2Freq() / 1000000 ) );
 	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
 }
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
+

@@ -3579,3 +3579,8 @@ java.util.ConcurrentModificationException
 2021-12-30 20:27:21,876 [INFO] IPUIPlugin:74 - create IPUIPlugin
 2021-12-30 20:27:21,878 [INFO] ApiDbMcu:488 - Load IP Config File for PDM2PCM
 2021-12-30 20:27:21,971 [INFO] OpenFileManager:333 - Restore cursor
+2021-12-31 07:38:53,951 [INFO] Activator:177 - 
+
+
+2021-12-31 07:38:53,953 [INFO] Activator:178 - !SESSION log4j initialized
+2021-12-31 07:38:58,343 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com

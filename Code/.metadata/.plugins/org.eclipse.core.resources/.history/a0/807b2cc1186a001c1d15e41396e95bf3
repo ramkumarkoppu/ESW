@@ -33,10 +33,10 @@ int main( void )
 #if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 	// Print current settings of clocks.
 	displayClkInfo();
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
 	/* Configure the system clock */
 	SystemClock_Config();
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
 #ifdef USE_UART_EXAMPLE
 	const char *pMsg = "Hello, how are you?\r";

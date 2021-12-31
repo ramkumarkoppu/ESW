@@ -27,9 +27,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 0000002e  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000a8bc  00000000  00000000  0002009e  2**0
+ 12 .debug_info   0000a8bd  00000000  00000000  0002009e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001411  00000000  00000000  0002a95a  2**0
+ 13 .debug_abbrev 00001411  00000000  00000000  0002a95b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00000610  00000000  00000000  0002bd70  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -451,6 +451,7 @@ int main( void )
 	HAL_Init();
  80005fc:	f000 f9f1 	bl	80009e2 <HAL_Init>
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 	// Print current settings of clocks.
 	displayClkInfo();
  8000600:	f000 f8d4 	bl	80007ac <_ZL14displayClkInfov>
@@ -754,6 +755,7 @@ static void Error_Handler( void )
 080007ac <_ZL14displayClkInfov>:
 }
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void displayClkInfo( void )
 {
  80007ac:	b580      	push	{r7, lr}
