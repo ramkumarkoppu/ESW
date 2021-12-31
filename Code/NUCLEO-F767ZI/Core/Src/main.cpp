@@ -19,7 +19,11 @@ std::uint8_t cnt{0};
 static void SystemClock_Config( void );
 static void displayClkInfo( void );
 #endif
+
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
 static void UART3_Init( void );
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
+
 static void Error_Handler( void );
 #ifdef USE_UART_EXAMPLE
 static inline char convert_to_Upper( char c );
@@ -104,6 +108,7 @@ void HAL_UART_TxCpltCallback( UART_HandleTypeDef *huart )
 
 #endif // USE_UART_EXAMPLE
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void SystemClock_Config( void )
 {
 #ifdef USE_HSE_EXAMPLE
@@ -215,7 +220,9 @@ static void SystemClock_Config( void )
 	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
 #endif // USE_PLL_EXAMPLE
 }
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
 /* USART3 Initialization Function */
 static void UART3_Init( void )
 {
@@ -240,6 +247,7 @@ static void UART3_Init( void )
 		Error_Handler();
 	}
 }
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
 
 #ifdef USE_UART_EXAMPLE
 static inline char convert_to_Upper( char c )
