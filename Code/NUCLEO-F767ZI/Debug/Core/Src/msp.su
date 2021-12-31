@@ -1,0 +1,2 @@
+msp.cpp:10:17:void HAL_MspInit()	8	static
+msp.cpp:25:17:void HAL_UART_MspInit(UART_HandleTypeDef*)	48	static

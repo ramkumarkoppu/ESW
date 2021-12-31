@@ -9,11 +9,16 @@
 #include <cstdio>
 #include "main.h"
 
-UART_HandleTypeDef huart3;
 #ifdef USE_UART_EXAMPLE
+UART_HandleTypeDef huart3;
 static char recv_data[64];
 std::uint8_t cnt{0};
 #endif // USE_UART_EXAMPLE
+
+#ifdef USE_BASIC_TIMER_EXAMPLE
+static TIM_HandleTypeDef TIM6_handle;
+static void TIM6_init( void );
+#endif // USE_BASIC_TIMER_EXAMPLE
 
 #if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void SystemClock_Config( void );
@@ -57,6 +62,10 @@ int main( void )
 	// Print current settings of clocks.
 	displayClkInfo();
 #endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
+
+#ifdef USE_BASIC_TIMER_EXAMPLE
+	TIM6_init();
+#endif // USE_BASIC_TIMER_EXAMPLE
 
 	while(true)
 	{
@@ -286,3 +295,12 @@ static void displayClkInfo( void )
 	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
 }
 #endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
+
+#ifdef USE_BASIC_TIMER_EXAMPLE
+static void TIM6_init( void )
+{
+	TIM6_handle.Instance = TIM6;
+	TIM6_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
+
+}
+#endif // USE_BASIC_TIMER_EXAMPLE

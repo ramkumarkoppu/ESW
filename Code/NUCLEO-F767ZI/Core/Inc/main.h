@@ -18,9 +18,9 @@ extern "C"
 #ifdef USE_UART_EXAMPLE
 void HAL_UART_RxCpltCallback( UART_HandleTypeDef *huart );
 void HAL_UART_TxCpltCallback( UART_HandleTypeDef *huart );
-#endif // USE_UART_EXAMPLE
 
 extern UART_HandleTypeDef huart3;
+#endif // USE_UART_EXAMPLE
 
 #ifdef __cplusplus
 }

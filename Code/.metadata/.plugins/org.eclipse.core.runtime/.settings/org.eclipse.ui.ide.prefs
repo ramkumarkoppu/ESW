@@ -1,4 +1,6 @@
 EXIT_PROMPT_ON_CLOSE_LAST_WINDOW=false
+REFRESH_WORKSPACE_ON_STARTUP=true
+WORKSPACE_NAME=ESW
 eclipse.preferences.version=1
 platformState=1640270575258
 quickStart=false
