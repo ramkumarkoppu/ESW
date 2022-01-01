@@ -1,3 +1,4 @@
-main.cpp:37:5:int main()	8	static
-main.cpp:275:13:void Error_Handler()	4	static
-main.cpp:300:13:void TIM6_init()	8	static
+main.cpp:38:5:int main()	8	static
+main.cpp:289:13:void Error_Handler()	4	static
+main.cpp:314:13:void TIM6_init()	8	static
+main.cpp:328:13:void LED_init()	32	static

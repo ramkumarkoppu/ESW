@@ -18,6 +18,7 @@ std::uint8_t cnt{0};
 #ifdef USE_BASIC_TIMER_EXAMPLE
 static TIM_HandleTypeDef hTimer6;
 static void TIM6_init( void );
+static void LED_init( void );
 #endif // USE_BASIC_TIMER_EXAMPLE
 
 #if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
@@ -64,12 +65,25 @@ int main( void )
 #endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
 
 #ifdef USE_BASIC_TIMER_EXAMPLE
+	// Initialize the Timer.
 	TIM6_init();
+	// Initialize the LED.
+	LED_init();
+	// Set initial state to low.
+	HAL_GPIO_WritePin( GPIOB, GPIO_PIN_7, GPIO_PIN_RESET );
+	// Start the Timer.
+	HAL_TIM_Base_Start( &hTimer6 );
 #endif // USE_BASIC_TIMER_EXAMPLE
 
 	while(true)
 	{
-
+		// Toggle LED only if Timer 6 update flag is received.
+		if (__HAL_TIM_GET_FLAG( &hTimer6, TIM_FLAG_UPDATE ) )
+		{
+			// Clear the Status Flag.
+			__HAL_TIM_CLEAR_FLAG( &hTimer6, TIM_FLAG_UPDATE );
+			HAL_GPIO_TogglePin( GPIOB, GPIO_PIN_7 );
+		}
 	}
 
 	return 0;
@@ -309,5 +323,18 @@ static void TIM6_init( void )
 		// Error in Timer Configuration.
 		Error_Handler();
 	}
+}
+
+static void LED_init( void )
+{
+	/* Blue User LED is connected to GPIOB pin 7. */
+	GPIO_InitTypeDef LED_pin_config{0};
+	LED_pin_config.Pin = GPIO_PIN_7;
+	LED_pin_config.Mode = GPIO_MODE_OUTPUT_PP;
+	LED_pin_config.Speed = GPIO_SPEED_FREQ_LOW;
+	LED_pin_config.Pull = GPIO_NOPULL;
+	// Enable clock for GPIOB.
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOB, &LED_pin_config );
 }
 #endif // USE_BASIC_TIMER_EXAMPLE
