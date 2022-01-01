@@ -1,1 +1,2 @@
 it.cpp:10:17:void SysTick_Handler()	8	static
+it.cpp:27:17:void TIM6_DAC_IRQHandler()	8	static

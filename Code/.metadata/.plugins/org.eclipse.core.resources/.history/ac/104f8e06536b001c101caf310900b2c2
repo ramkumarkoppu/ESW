@@ -23,11 +23,6 @@ extern "C" void USART3_IRQHandler( void )
 }
 #endif // USE_UART_EXAMPLE
 
-#ifdef USE_BASIC_TIMER_EXAMPLE
-extern "C" void TIM6_DAC_IRQHandler( void )
-{
-	// Invoke callback if it exists.
-	HAL_TIM_IRQHandler( &hTimer6 );
-}
-#endif // USE_BASIC_TIMER_EXAMPLE
+
+
 
