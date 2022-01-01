@@ -1,2 +1,2 @@
-The Embedded Development platform(s) I use Tiny Machine Learning (TinyML) related experiments.
+The Embedded Development platform(s) used in my Tiny Machine Learning (TinyML) related experiments.
 
