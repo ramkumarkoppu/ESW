@@ -7,7 +7,7 @@
 #include "main.h"
 
 /* Low level Processor specific initialization */
-extern "C" void HAL_MspInit(void)
+extern "C" void HAL_MspInit( void )
 {
 	// Set the priority grouping of the processor.
 	HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
@@ -16,13 +16,14 @@ extern "C" void HAL_MspInit(void)
 	SCB->SHCSR |= ( (1U << 18U) | (1U << 17U) | (1U << 16U) );
 
 	// Configure the priority of the system exceptions.
-	HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
-	HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
-	HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
+	HAL_NVIC_SetPriority( UsageFault_IRQn, 0, 0 );
+	HAL_NVIC_SetPriority( BusFault_IRQn, 0, 0 );
+	HAL_NVIC_SetPriority( MemoryManagement_IRQn, 0, 0 );
 }
 
+#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
 /* UART Low level initilization */
-extern "C" void HAL_UART_MspInit(UART_HandleTypeDef *huart)
+extern "C" void HAL_UART_MspInit( UART_HandleTypeDef *huart )
 {
 	GPIO_InitTypeDef USART3_gpio_config{0};
 
@@ -38,12 +39,22 @@ extern "C" void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 	USART3_gpio_config.Pull = GPIO_PULLUP;
 	USART3_gpio_config.Speed = GPIO_SPEED_FREQ_LOW;
 	USART3_gpio_config.Alternate = GPIO_AF7_USART3;
-	HAL_GPIO_Init(GPIOD, &USART3_gpio_config);
+	HAL_GPIO_Init( GPIOD, &USART3_gpio_config );
 
 	// Enable the IRQ and set up the priority (NVIC settings)
-	HAL_NVIC_SetPriority(USART3_IRQn, 0x0F, 0);
-	HAL_NVIC_EnableIRQ(USART3_IRQn);
+	HAL_NVIC_SetPriority( USART3_IRQn, 0x0F, 0 );
+	HAL_NVIC_EnableIRQ( USART3_IRQn );
 }
+#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
 
+extern "C" void HAL_TIM_Base_MspInit( TIM_HandleTypeDef *htim )
+{
+	// Enable the clock for the TIM6.
+	__HAL_RCC_TIM6_CLK_ENABLE();
+
+	// Enable TIM6 IRQ.
+	HAL_NVIC_SetPriority( TIM6_DAC_IRQn, 15, 0 );
+	HAL_NVIC_EnableIRQ( TIM6_DAC_IRQn );
+}
 
 

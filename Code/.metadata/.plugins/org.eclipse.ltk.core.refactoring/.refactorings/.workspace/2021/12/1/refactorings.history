@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;NUCLEO-F767ZI/Core/Inc/stm32f7xx_it.h&apos;" deleteContents="false" description="Delete resource &apos;NUCLEO-F767ZI/Core/Inc/stm32f7xx_it.h&apos;" element1="/NUCLEO-F767ZI/Core/Inc/stm32f7xx_it.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1640984203209"/>
+</session>

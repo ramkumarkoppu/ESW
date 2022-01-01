@@ -16,7 +16,7 @@ std::uint8_t cnt{0};
 #endif // USE_UART_EXAMPLE
 
 #ifdef USE_BASIC_TIMER_EXAMPLE
-static TIM_HandleTypeDef TIM6_handle;
+static TIM_HandleTypeDef hTimer6;
 static void TIM6_init( void );
 #endif // USE_BASIC_TIMER_EXAMPLE
 
@@ -299,8 +299,15 @@ static void displayClkInfo( void )
 #ifdef USE_BASIC_TIMER_EXAMPLE
 static void TIM6_init( void )
 {
-	TIM6_handle.Instance = TIM6;
-	TIM6_handle.Init.CounterMode = TIM_COUNTERMODE_UP;
-
+	/* Configure basic timer to generate timer update event for every 100ms. */
+	hTimer6.Instance = TIM6;
+	hTimer6.Init.CounterMode = TIM_COUNTERMODE_UP;
+	hTimer6.Init.Prescaler = 24;
+	hTimer6.Init.Period = 64000 - 1;
+	if ( HAL_TIM_Base_Init( &hTimer6 ) != HAL_OK )
+	{
+		// Error in Timer Configuration.
+		Error_Handler();
+	}
 }
 #endif // USE_BASIC_TIMER_EXAMPLE

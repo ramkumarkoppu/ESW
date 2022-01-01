@@ -19,7 +19,7 @@ extern "C" void SysTick_Handler( void )
 extern "C" void USART3_IRQHandler( void )
 {
 	// Invoke callback if it exists.
-	HAL_UART_IRQHandler(&huart3);
+	HAL_UART_IRQHandler( &huart3 );
 }
 #endif // USE_UART_EXAMPLE
 
