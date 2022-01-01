@@ -314,11 +314,11 @@ static void displayClkInfo( void )
 #ifdef USE_BASIC_TIMER_EXAMPLE
 static void TIM6_init( void )
 {
-	/* Configure basic timer to generate timer update event for every 100us. */
+	/* Configure basic timer to generate timer update event for every 100ms. */
 	hTimer6.Instance = TIM6;
 	hTimer6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hTimer6.Init.Prescaler = 16;
-	hTimer6.Init.Period = 100 - 1;
+	hTimer6.Init.Prescaler = 24;
+	hTimer6.Init.Period = 64000 - 1;
 	if ( HAL_TIM_Base_Init( &hTimer6 ) != HAL_OK )
 	{
 		// Error in Timer Configuration.

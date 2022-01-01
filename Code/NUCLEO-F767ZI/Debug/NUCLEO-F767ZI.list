@@ -198,7 +198,7 @@ static void TIM6_init( void )
 {
  80002ac:	b580      	push	{r7, lr}
  80002ae:	af00      	add	r7, sp, #0
-	/* Configure basic timer to generate timer update event for every 100ms. */
+	/* Configure basic timer to generate timer update event for every 100us. */
 	hTimer6.Instance = TIM6;
  80002b0:	4b0d      	ldr	r3, [pc, #52]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
  80002b2:	4a0e      	ldr	r2, [pc, #56]	; (80002ec <_ZL9TIM6_initv+0x40>)
@@ -207,33 +207,34 @@ static void TIM6_init( void )
  80002b6:	4b0c      	ldr	r3, [pc, #48]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
  80002b8:	2200      	movs	r2, #0
  80002ba:	609a      	str	r2, [r3, #8]
-	hTimer6.Init.Prescaler = 24;
+	hTimer6.Init.Prescaler = 16;
  80002bc:	4b0a      	ldr	r3, [pc, #40]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
- 80002be:	2218      	movs	r2, #24
+ 80002be:	2210      	movs	r2, #16
  80002c0:	605a      	str	r2, [r3, #4]
-	hTimer6.Init.Period = 64000 - 1;
+	hTimer6.Init.Period = 100 - 1;
  80002c2:	4b09      	ldr	r3, [pc, #36]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
- 80002c4:	f64f 12ff 	movw	r2, #63999	; 0xf9ff
- 80002c8:	60da      	str	r2, [r3, #12]
+ 80002c4:	2263      	movs	r2, #99	; 0x63
+ 80002c6:	60da      	str	r2, [r3, #12]
 	if ( HAL_TIM_Base_Init( &hTimer6 ) != HAL_OK )
- 80002ca:	4807      	ldr	r0, [pc, #28]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
- 80002cc:	f000 fc05 	bl	8000ada <HAL_TIM_Base_Init>
- 80002d0:	4603      	mov	r3, r0
- 80002d2:	2b00      	cmp	r3, #0
- 80002d4:	bf14      	ite	ne
- 80002d6:	2301      	movne	r3, #1
- 80002d8:	2300      	moveq	r3, #0
- 80002da:	b2db      	uxtb	r3, r3
- 80002dc:	2b00      	cmp	r3, #0
- 80002de:	d001      	beq.n	80002e4 <_ZL9TIM6_initv+0x38>
+ 80002c8:	4807      	ldr	r0, [pc, #28]	; (80002e8 <_ZL9TIM6_initv+0x3c>)
+ 80002ca:	f000 fc06 	bl	8000ada <HAL_TIM_Base_Init>
+ 80002ce:	4603      	mov	r3, r0
+ 80002d0:	2b00      	cmp	r3, #0
+ 80002d2:	bf14      	ite	ne
+ 80002d4:	2301      	movne	r3, #1
+ 80002d6:	2300      	moveq	r3, #0
+ 80002d8:	b2db      	uxtb	r3, r3
+ 80002da:	2b00      	cmp	r3, #0
+ 80002dc:	d001      	beq.n	80002e2 <_ZL9TIM6_initv+0x36>
 	{
 		// Error in Timer Configuration.
 		Error_Handler();
- 80002e0:	f7ff ffe0 	bl	80002a4 <_ZL13Error_Handlerv>
+ 80002de:	f7ff ffe1 	bl	80002a4 <_ZL13Error_Handlerv>
 	}
 }
- 80002e4:	bf00      	nop
- 80002e6:	bd80      	pop	{r7, pc}
+ 80002e2:	bf00      	nop
+ 80002e4:	bd80      	pop	{r7, pc}
+ 80002e6:	bf00      	nop
  80002e8:	20000028 	.word	0x20000028
  80002ec:	40001000 	.word	0x40001000
 
