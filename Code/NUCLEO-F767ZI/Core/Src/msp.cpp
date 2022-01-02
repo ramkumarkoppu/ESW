@@ -4,6 +4,7 @@
  *  Created on: Dec 24, 2021
  *      Author: rkoppu
  */
+#include <cstring>
 #include "main.h"
 
 /* Low level Processor specific initialization */
@@ -21,7 +22,6 @@ extern "C" void HAL_MspInit( void )
 	HAL_NVIC_SetPriority( MemoryManagement_IRQn, 0, 0 );
 }
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
 /* UART Low level initilization */
 extern "C" void HAL_UART_MspInit( UART_HandleTypeDef *huart )
 {
@@ -45,7 +45,6 @@ extern "C" void HAL_UART_MspInit( UART_HandleTypeDef *huart )
 	HAL_NVIC_SetPriority( USART3_IRQn, 0x0F, 0 );
 	HAL_NVIC_EnableIRQ( USART3_IRQn );
 }
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
 
 #ifdef USE_BASIC_TIMER_EXAMPLE
 extern "C" void HAL_TIM_Base_MspInit( TIM_HandleTypeDef *htim )
@@ -79,5 +78,32 @@ extern "C" void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim)
 }
 #endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
 
+#ifdef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+extern "C" void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim)
+{
+	// Enable the clock for the TIM2.
+	__HAL_RCC_TIM2_CLK_ENABLE();
 
+	/* Configure GPIO pins (PA0 (TIM2-CH1), PB3 (TIM2-CH2), PA2 (TIM2-CH3), PA3 (TIM2-CH4)) as Timer 2 output channels. */
+	GPIO_InitTypeDef tim2_ch_gpios{0};
+	tim2_ch_gpios.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3;
+	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
+	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
+	// Enable the Clock for GPIOA.
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOA, &tim2_ch_gpios );
+
+	std::memset( &tim2_ch_gpios, 0, sizeof(tim2_ch_gpios) );
+	tim2_ch_gpios.Pin = GPIO_PIN_3;
+	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
+	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
+	// Enable the Clock for GPIOB.
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOB, &tim2_ch_gpios );
+
+	// Enable TIM2 IRQ.
+	HAL_NVIC_SetPriority( TIM2_IRQn, 15, 0 );
+	HAL_NVIC_EnableIRQ( TIM2_IRQn );
+}
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 

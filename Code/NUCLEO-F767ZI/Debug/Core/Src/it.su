@@ -1,3 +1,2 @@
 it.cpp:10:17:void SysTick_Handler()	8	static
-it.cpp:19:17:void USART3_IRQHandler()	8	static
 it.cpp:35:17:void TIM2_IRQHandler()	8	static

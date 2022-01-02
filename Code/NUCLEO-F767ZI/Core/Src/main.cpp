@@ -8,48 +8,56 @@
 #include <cstring>
 #include <cstdio>
 #include "main.h"
+#ifdef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+#define OC_CHANNELS	(4U)
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
-#ifdef USE_UART_EXAMPLE
 UART_HandleTypeDef huart3;
-//static char recv_data[64];
-//std::uint8_t cnt{0};
+#ifdef USE_UART_EXAMPLE
+static char recv_data[64];
+std::uint8_t cnt{0};
 #endif // USE_UART_EXAMPLE
 
 #ifdef USE_BASIC_TIMER_EXAMPLE
 TIM_HandleTypeDef hTimer6;
-#endif // USE_BASIC_TIMER_EXAMPLE
+#endif // USE_BASIC_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
 TIM_HandleTypeDef hTimer2;
+static std::uint32_t pulse_values[ OC_CHANNELS ] = { 25000, // 500HZ
+										12500, // 1KHz
+										6250, // 2KHz
+										3125 // 4KHz
+									  };
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+
+#ifndef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 static volatile std::uint32_t TIM_cnts[2];
 std::uint8_t capture_idx;
 bool capture_completed;
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
 #ifdef USE_BASIC_TIMER_EXAMPLE
 static void TIM6_init( void );
 static void LED_init( void );
 #endif // USE_BASIC_TIMER_EXAMPLE
 
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
 static void TIM2_init( void );
-static void SystemClock_Config( void );
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+
+#ifndef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 static void LSE_config( void );
 static void displayUserSigInfo( void );
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 static void SystemClock_Config( void );
 static void displayClkInfo( void );
-#endif
-
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
 static void UART3_Init( void );
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
 
 static void Error_Handler( void );
 #ifdef USE_UART_EXAMPLE
-//static inline char convert_to_Upper( char c );
+static inline char convert_to_Upper( char c );
 #endif // USE_UART_EXAMPLE
 
 int main( void )
@@ -57,13 +65,14 @@ int main( void )
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
 	// Print current settings of clocks.
 	displayClkInfo();
 
 	/* Configure the system clock */
 	SystemClock_Config();
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
+
+	// Print current settings of clocks.
+	displayClkInfo();
 
 #ifdef USE_UART_EXAMPLE
 #if 0
@@ -78,15 +87,6 @@ int main( void )
 #endif
 #endif // USE_UART_EXAMPLE
 
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
-	SystemClock_Config();
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
-
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
-	// Print current settings of clocks.
-	displayClkInfo();
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
-
 #ifdef USE_BASIC_TIMER_EXAMPLE
 	// Initialize the Timer.
 	TIM6_init();
@@ -98,19 +98,47 @@ int main( void )
 	HAL_TIM_Base_Start_IT( &hTimer6 );
 #endif // USE_BASIC_TIMER_EXAMPLE
 
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
 	TIM2_init();
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+
+#ifndef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 	LSE_config();
 	HAL_TIM_IC_Start_IT( &hTimer2, TIM_CHANNEL_1 );
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+
+#ifdef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+	if ( HAL_TIM_OC_Start_IT( &hTimer2, TIM_CHANNEL_1 ) != HAL_OK)
+	{
+		// Error in Timer Start.
+		Error_Handler();
+	}
+	if ( HAL_TIM_OC_Start_IT( &hTimer2, TIM_CHANNEL_2 ) != HAL_OK)
+	{
+		// Error in Timer Start.
+		Error_Handler();
+	}
+	if ( HAL_TIM_OC_Start_IT( &hTimer2, TIM_CHANNEL_3 ) != HAL_OK)
+	{
+		// Error in Timer Start.
+		Error_Handler();
+	}
+	if ( HAL_TIM_OC_Start_IT( &hTimer2, TIM_CHANNEL_4 ) != HAL_OK)
+	{
+		// Error in Timer Start.
+		Error_Handler();
+	}
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
 	while(true)
 	{
+#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
 		if (capture_completed)
 		{
 			displayUserSigInfo();
 			capture_completed = false;
 		}
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
 	}
 
 	return 0;
@@ -168,238 +196,32 @@ extern "C" void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 #endif // USE_BASIC_TIMER_EXAMPLE
 
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
-#if 0
-static void SystemClock_Config( void )
+#ifdef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+extern "C" void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 {
-#ifdef USE_HSE_EXAMPLE
-	// Configure the Clock Source.
-	RCC_OscInitTypeDef Osc_init{0};
-	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-	Osc_init.HSEState = RCC_HSE_BYPASS;
-	if ( HAL_RCC_OscConfig(&Osc_init) != HAL_OK )
+	switch ( htim->Channel )
 	{
-		// Error in Oscillator configuration.
-		Error_Handler();
-	}
-
-	// Configure the various clocks.
-	RCC_ClkInitTypeDef Clk_init{0};
-	Clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	Clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
-	Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV2;
-	Clk_init.APB1CLKDivider = RCC_HCLK_DIV2;
-	Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;
-	if ( HAL_RCC_ClockConfig( &Clk_init, FLASH_LATENCY_0 ) != HAL_OK )
-	{
-		// Error in Clock configuration.
-		Error_Handler();
-	}
-
-	// Disable HSI
-	__HAL_RCC_HSI_DISABLE();
-
-	// Configure SysTick with new clock settings.
-	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
-	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
-#endif // USE_HSE_EXAMPLE
-
-#ifdef USE_PLL_EXAMPLE
-	// Configure the Clock Source.
-	RCC_OscInitTypeDef Osc_init{0};
-//	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-//	Osc_init.HSIState = RCC_HSI_ON;
-//	Osc_init.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-//	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-//	Osc_init.PLL.PLLState = RCC_PLL_ON;
-	/* Configure PLL to generate 50MHz clock for SYSCLK. */
-//	Osc_init.PLL.PLLM = 16;
-//	Osc_init.PLL.PLLN = 100;
-//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
-	/* End of 50Mhz specific configuration */
-	/* Configure PLL to generate 84MHz clock for SYSCLK. */
-//	Osc_init.PLL.PLLM = 16;
-//	Osc_init.PLL.PLLN = 168;
-//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
-	/* End of 84Mhz specific configuration */
-	/* Configure PLL to generate 120MHz clock for SYSCLK. */
-//	Osc_init.PLL.PLLM = 16;
-//	Osc_init.PLL.PLLN = 240;
-//	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
-	/* End of 120Mhz specific configuration */
-	/* Configure PLL to generate 216MHz clock for SYSCLK using HSE as source. */
-
-	// This configuration requires Power Scale 1 and Over drive ON.
-	__HAL_RCC_PWR_CLK_ENABLE();
-	__HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
-	__HAL_PWR_OVERDRIVE_ENABLE();
-
-	Osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-	Osc_init.HSEState = RCC_HSE_BYPASS;
-	Osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	Osc_init.PLL.PLLState = RCC_PLL_ON;
-	Osc_init.PLL.PLLM = 4;
-	Osc_init.PLL.PLLN = 216;
-	Osc_init.PLL.PLLP = RCC_PLLP_DIV2;
-	/* End of 120Mhz specific configuration */
-	Osc_init.PLL.PLLQ = 2;
-	Osc_init.PLL.PLLR = 2;
-	if ( HAL_RCC_OscConfig(&Osc_init) != HAL_OK )
-	{
-		// Error in Oscillator or PLL configuration.
-		Error_Handler();
-	}
-
-	// Configure the various clocks.
-	RCC_ClkInitTypeDef Clk_init{0};
-	Clk_init.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	Clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	//Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1; // for 50, 84 and 120Mhz configurations.
-	//Clk_init.APB1CLKDivider = RCC_HCLK_DIV2;	// for 50 and 84 configurations.
-	//Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 128HHz configuration.
-	//Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 50, 84 and 128MHz configurations.
-	std::uint32_t flash_latency{FLASH_LATENCY_0};
-	//flash_latency = FLASH_LATENCY_1; // for 50MHz configuration.
-	//flash_latency = FLASH_LATENCY_2; // for 84MHz configuration.
-	// for 216MHz configuration.
-	Clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	Clk_init.APB1CLKDivider = RCC_HCLK_DIV4;	// for 54HHz PCLK1.
-	Clk_init.APB2CLKDivider = RCC_HCLK_DIV2;	// for 108HHz PCLK2.
-//	flash_latency = FLASH_LATENCY_4; // for 120MHz configuration.
-	flash_latency = FLASH_LATENCY_7; // for 216MHz configuration.
-	if ( HAL_RCC_ClockConfig( &Clk_init, flash_latency ) != HAL_OK )
-	{
-		// Error in Clock configuration.
-		Error_Handler();
-	}
-
-	// Disable HSI
-	__HAL_RCC_HSI_DISABLE();
-
-	// Configure SysTick with new clock settings.
-	HAL_SYSTICK_CLKSourceConfig( SYSTICK_CLKSOURCE_HCLK );
-	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
-#endif // USE_PLL_EXAMPLE
-}
-#endif
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
-
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE ) || defined( USE_UART_EXAMPLE )
-/* USART3 Initialization Function */
-static void UART3_Init( void )
-{
-	std::memset( &huart3, 0, sizeof(huart3) );
-	/* UART High level initilization */
-	huart3.Instance = USART3;
-
-	huart3.Init.BaudRate = 115200U;
-	huart3.Init.WordLength = UART_WORDLENGTH_8B;
-	huart3.Init.StopBits = UART_STOPBITS_1;
-	huart3.Init.Parity = UART_PARITY_NONE;
-	huart3.Init.Mode = UART_MODE_TX_RX;
-	huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-	huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-
-	huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-	if (HAL_UART_Init( &huart3 ) != HAL_OK)
-	{
-		// Initialization Error.
-		Error_Handler();
+	case HAL_TIM_ACTIVE_CHANNEL_1:
+		// Program the Compare Register.
+		__HAL_TIM_SET_COMPARE( htim, TIM_CHANNEL_1, ( HAL_TIM_ReadCapturedValue( htim, TIM_CHANNEL_1 ) + pulse_values[0] ) );
+		break;
+	case HAL_TIM_ACTIVE_CHANNEL_2:
+		// Program the Compare Register.
+		__HAL_TIM_SET_COMPARE( htim, TIM_CHANNEL_2, ( HAL_TIM_ReadCapturedValue( htim, TIM_CHANNEL_2 ) + pulse_values[1] ) );
+		break;
+	case HAL_TIM_ACTIVE_CHANNEL_3:
+		// Program the Compare Register.
+		__HAL_TIM_SET_COMPARE( htim, TIM_CHANNEL_3, ( HAL_TIM_ReadCapturedValue( htim, TIM_CHANNEL_3 ) + pulse_values[2] ) );
+		break;
+	case HAL_TIM_ACTIVE_CHANNEL_4:
+		// Program the Compare Register.
+		__HAL_TIM_SET_COMPARE( htim, TIM_CHANNEL_4, ( HAL_TIM_ReadCapturedValue( htim, TIM_CHANNEL_4 ) + pulse_values[3] ) );
+		break;
+	default:
+		break;
 	}
 }
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
-
-#ifdef USE_UART_EXAMPLE
-#if 0
-static inline char convert_to_Upper( char c )
-{
-	char retVal{c};
-
-	if ( (c >= 'a') && (c <= 'z') )
-	{
-		retVal -= ('a' - 'A');
-	}
-
-	return retVal;
-}
-#endif
-#endif // USE_UART_EXAMPLE
-
-static void Error_Handler( void )
-{
-	for (;;);
-}
-
-#if defined( USE_HSE_EXAMPLE ) || defined( USE_PLL_EXAMPLE )
-static void displayClkInfo( void )
-{
-	char msg[1024];
-
-	/* Configure the UART for debug console */
-	UART3_Init();
-
-	std::sprintf (msg, "SYSCLK:%luMHz, HCLK:%luMHz, PCLK1:%luMHz, PCLK2:%luMHz\r\n",
-			( HAL_RCC_GetSysClockFreq() / 1000000 ), ( HAL_RCC_GetHCLKFreq() / 1000000 ), ( HAL_RCC_GetPCLK1Freq() / 1000000 ), ( HAL_RCC_GetPCLK2Freq() / 1000000 ) );
-
-	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
-}
-#endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE
-
-#ifdef USE_BASIC_TIMER_EXAMPLE
-static void TIM6_init( void )
-{
-	/* Configure basic timer to generate timer update event for every 100us. */
-	hTimer6.Instance = TIM6;
-	hTimer6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hTimer6.Init.Prescaler = 16;
-	hTimer6.Init.Period = 100 - 1;
-	if ( HAL_TIM_Base_Init( &hTimer6 ) != HAL_OK )
-	{
-		// Error in Timer Configuration.
-		Error_Handler();
-	}
-}
-
-static void LED_init( void )
-{
-	/* Blue User LED is connected to GPIOB pin 7. */
-	GPIO_InitTypeDef LED_pin_config{0};
-	LED_pin_config.Pin = GPIO_PIN_7;
-	LED_pin_config.Mode = GPIO_MODE_OUTPUT_PP;
-	LED_pin_config.Speed = GPIO_SPEED_FREQ_LOW;
-	LED_pin_config.Pull = GPIO_NOPULL;
-	// Enable clock for GPIOB.
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	HAL_GPIO_Init( GPIOB, &LED_pin_config );
-}
-#endif // USE_BASIC_TIMER_EXAMPLE
-
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
-static void TIM2_init( void )
-{
-	hTimer2.Instance = TIM2;
-	hTimer2.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hTimer2.Init.Prescaler = 1; // Run timer at 25MHz.
-	hTimer2.Init.Period = 0xFFFFFFFFU;
-	if ( HAL_TIM_IC_Init( &hTimer2 ) != HAL_OK )
-	{
-		// Error in Timer initialization.
-		Error_Handler();
-	}
-
-	TIM_IC_InitTypeDef tim2_ic_config{0};
-	tim2_ic_config.ICFilter = 0;
-	tim2_ic_config.ICPolarity = TIM_ICPOLARITY_RISING;
-	tim2_ic_config.ICSelection = TIM_ICSELECTION_DIRECTTI;
-	tim2_ic_config.ICPrescaler = TIM_ICPSC_DIV1;
-	if ( HAL_TIM_IC_ConfigChannel( &hTimer2, &tim2_ic_config, TIM_CHANNEL_1 ) != HAL_OK )
-	{
-		// Error in Timer input channel configuration.
-		Error_Handler();
-	}
-}
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
 static void SystemClock_Config( void )
 {
@@ -452,6 +274,123 @@ static void SystemClock_Config( void )
 	HAL_SYSTICK_Config( ( HAL_RCC_GetHCLKFreq() / 1000 ) );
 }
 
+/* USART3 Initialization Function */
+static void UART3_Init( void )
+{
+	std::memset( &huart3, 0, sizeof(huart3) );
+	/* UART High level initilization */
+	huart3.Instance = USART3;
+
+	huart3.Init.BaudRate = 115200U;
+	huart3.Init.WordLength = UART_WORDLENGTH_8B;
+	huart3.Init.StopBits = UART_STOPBITS_1;
+	huart3.Init.Parity = UART_PARITY_NONE;
+	huart3.Init.Mode = UART_MODE_TX_RX;
+	huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+	huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+
+	huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
+	if (HAL_UART_Init( &huart3 ) != HAL_OK)
+	{
+		// Initialization Error.
+		Error_Handler();
+	}
+}
+
+#ifdef USE_UART_EXAMPLE
+#if 0
+static inline char convert_to_Upper( char c )
+{
+	char retVal{c};
+
+	if ( (c >= 'a') && (c <= 'z') )
+	{
+		retVal -= ('a' - 'A');
+	}
+
+	return retVal;
+}
+#endif
+#endif // USE_UART_EXAMPLE
+
+static void Error_Handler( void )
+{
+	for (;;);
+}
+
+static void displayClkInfo( void )
+{
+	char msg[1024];
+
+	/* Configure the UART for debug console */
+	UART3_Init();
+
+	std::sprintf (msg, "SYSCLK:%luMHz, HCLK:%luMHz, PCLK1:%luMHz, PCLK2:%luMHz\r\n",
+			( HAL_RCC_GetSysClockFreq() / 1000000 ), ( HAL_RCC_GetHCLKFreq() / 1000000 ), ( HAL_RCC_GetPCLK1Freq() / 1000000 ), ( HAL_RCC_GetPCLK2Freq() / 1000000 ) );
+
+	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
+}
+
+#ifdef USE_BASIC_TIMER_EXAMPLE
+static void TIM6_init( void )
+{
+	/* Configure basic timer to generate timer update event for every 100us. */
+	hTimer6.Instance = TIM6;
+	hTimer6.Init.CounterMode = TIM_COUNTERMODE_UP;
+	hTimer6.Init.Prescaler = 16;
+	hTimer6.Init.Period = 100 - 1;
+	if ( HAL_TIM_Base_Init( &hTimer6 ) != HAL_OK )
+	{
+		// Error in Timer Configuration.
+		Error_Handler();
+	}
+}
+
+static void LED_init( void )
+{
+	/* Blue User LED is connected to GPIOB pin 7. */
+	GPIO_InitTypeDef LED_pin_config{0};
+	LED_pin_config.Pin = GPIO_PIN_7;
+	LED_pin_config.Mode = GPIO_MODE_OUTPUT_PP;
+	LED_pin_config.Speed = GPIO_SPEED_FREQ_LOW;
+	LED_pin_config.Pull = GPIO_NOPULL;
+	// Enable clock for GPIOB.
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOB, &LED_pin_config );
+}
+#endif // USE_BASIC_TIMER_EXAMPLE
+
+#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
+static void TIM2_init( void )
+{
+	hTimer2.Instance = TIM2;
+	hTimer2.Init.CounterMode = TIM_COUNTERMODE_UP;
+	hTimer2.Init.Prescaler = 0x01; // Run Timer at 25MHz.
+	hTimer2.Init.Period = 0xFFFFFFFFU;
+	if ( HAL_TIM_OC_Init( &hTimer2 ) != HAL_OK )
+	{
+		// Error in Timer Initialization.
+		Error_Handler();
+	}
+
+	TIM_OC_InitTypeDef Tim2_OC_config{0};
+	Tim2_OC_config.OCMode = TIM_OCMODE_TOGGLE;
+	Tim2_OC_config.OCNPolarity = TIM_OCPOLARITY_HIGH;
+	for ( std::uint8_t OC_idx{0}; OC_idx < OC_CHANNELS; OC_idx++ )
+	{
+		Tim2_OC_config.Pulse = pulse_values[OC_idx];
+		if ( HAL_TIM_OC_ConfigChannel( &hTimer2, &Tim2_OC_config, (TIM_CHANNEL_1 + (OC_idx * 4)) ) != HAL_OK)
+		{
+			// Error in Timer Output Channel Configuration.
+			Error_Handler();
+		}
+	}
+}
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
+
+#ifndef USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 static void LSE_config( void )
 {
 	/* Configure the Oscillator. */
@@ -520,4 +459,4 @@ static void displayUserSigInfo( void )
 	std::sprintf (msg, "%.3lfKhz\r\n", ( user_sig_freq / 1000 ) );
 	HAL_UART_Transmit( &huart3, (const std::uint8_t *)msg, std::strlen(msg), HAL_MAX_DELAY );
 }
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE

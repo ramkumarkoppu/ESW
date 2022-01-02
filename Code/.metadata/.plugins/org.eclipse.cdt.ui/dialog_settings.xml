@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
-	<item key="org.eclipse.cdt.utils.ui.controls.FileListControl" value="USE_BASIC_TIMER_EXAMPLE"/>
+	<item key="org.eclipse.cdt.utils.ui.controls.FileListControl" value="USE_OUTPUT_CAPTURE_TIMER_EXAMPLE"/>
 	<section name="completion_proposal_size">
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
@@ -23,6 +23,8 @@
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration.internal">
 		<item key="size.width" value="916"/>
-		<item key="size.height" value="180"/>
+		<item key="size.height" value="203"/>
+	</section>
+	<section name="NewClassWizardPage">
 	</section>
 </section>

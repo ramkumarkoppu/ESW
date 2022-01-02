@@ -26,9 +26,9 @@ extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef hTimer6;
 #endif // USE_BASIC_TIMER_EXAMPLE
 
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
 extern TIM_HandleTypeDef hTimer2;
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
 #ifdef __cplusplus
 }
