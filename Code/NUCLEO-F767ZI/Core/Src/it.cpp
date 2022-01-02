@@ -31,3 +31,10 @@ extern "C" void TIM6_DAC_IRQHandler( void )
 }
 #endif // USE_BASIC_TIMER_EXAMPLE
 
+#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+extern "C" void TIM2_IRQHandler( void )
+{
+	// Invoke callback if it exists.
+	HAL_TIM_IRQHandler( &hTimer2 );
+}
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE

@@ -47,6 +47,7 @@ extern "C" void HAL_UART_MspInit( UART_HandleTypeDef *huart )
 }
 #endif // USE_HSE_EXAMPLE or USE_PLL_EXAMPLE or USE_UART_EXAMPLE
 
+#ifdef USE_BASIC_TIMER_EXAMPLE
 extern "C" void HAL_TIM_Base_MspInit( TIM_HandleTypeDef *htim )
 {
 	// Enable the clock for the TIM6.
@@ -55,6 +56,28 @@ extern "C" void HAL_TIM_Base_MspInit( TIM_HandleTypeDef *htim )
 	// Enable TIM6 IRQ.
 	HAL_NVIC_SetPriority( TIM6_DAC_IRQn, 15, 0 );
 	HAL_NVIC_EnableIRQ( TIM6_DAC_IRQn );
+#endif // USE_BASIC_TIMER_EXAMPLE
+
+#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
+extern "C" void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim)
+{
+	// Enable the clock for the TIM2.
+	__HAL_RCC_TIM2_CLK_ENABLE();
+
+	// Configure GPIO pin PA0 as Timer 2 input channel.
+	GPIO_InitTypeDef tim2_ch1_gpio{0};
+	tim2_ch1_gpio.Pin = GPIO_PIN_0;
+	tim2_ch1_gpio.Mode = GPIO_MODE_AF_PP;
+	tim2_ch1_gpio.Alternate = GPIO_AF1_TIM2;
+	// Enable the Clock for GPIOA.
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOA, &tim2_ch1_gpio );
+
+	// Enable TIM2 IRQ.
+	HAL_NVIC_SetPriority( TIM2_IRQn, 15, 0 );
+	HAL_NVIC_EnableIRQ( TIM2_IRQn );
 }
+#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
+
 
 
