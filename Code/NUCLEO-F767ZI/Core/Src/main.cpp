@@ -13,7 +13,7 @@
 #endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE or USE_PWM_TIMER_EXAMPLE
 
 #if defined( USE_PWM_TIMER_EXAMPLE )
-#define PWM_CHANNELS	(4U)
+#define PWM_CHANNELS	(1U)
 #endif // USE_PWM_TIMER_EXAMPLE
 
 UART_HandleTypeDef huart3;
@@ -141,6 +141,7 @@ int main( void )
 #endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
 
 #if defined( USE_PWM_TIMER_EXAMPLE )
+#if 0
 	if ( HAL_TIM_PWM_Start_IT( &hTimer2, TIM_CHANNEL_1 ) != HAL_OK)
 	{
 		// Error in Timer Start.
@@ -161,6 +162,13 @@ int main( void )
 		// Error in Timer Start.
 		Error_Handler();
 	}
+#else
+	if ( HAL_TIM_PWM_Start_IT( &hTimer2, TIM_CHANNEL_2 ) != HAL_OK)
+	{
+		// Error in Timer Start.
+		Error_Handler();
+	}
+#endif
 #endif // USE_PWM_TIMER_EXAMPLE
 
 	while(true)
@@ -259,8 +267,35 @@ extern "C" void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 #ifdef USE_PWM_TIMER_EXAMPLE
 extern "C" void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
-	// Logic to update duty cycle on the fly goes here.
+	static bool rool_back{false};
 
+	// Logic to update duty cycle on the fly goes here.
+	if ( !rool_back )
+	{
+		if ( __HAL_TIM_GET_COMPARE( htim, TIM_CHANNEL_2 ) <= hTimer2.Init.Period )
+		{
+			pulse_values[0]++;
+		}
+		else if ( __HAL_TIM_GET_COMPARE( htim, TIM_CHANNEL_2 ) > hTimer2.Init.Period )
+		{
+			rool_back = true;
+		}
+	}
+
+	if ( rool_back )
+	{
+		if ( __HAL_TIM_GET_COMPARE( htim, TIM_CHANNEL_2 ) > 0 )
+		{
+			pulse_values[0]--;
+		}
+		else if ( __HAL_TIM_GET_COMPARE( htim, TIM_CHANNEL_2 ) == 0 )
+		{
+			pulse_values[0] = 0;
+			rool_back = false;
+		}
+	}
+
+	__HAL_TIM_SET_COMPARE( htim, TIM_CHANNEL_2, pulse_values[0] );
 }
 #endif // USE_PWM_TIMER_EXAMPLE
 
@@ -424,7 +459,7 @@ static void TIM2_init( void )
 		switch(chan_idx)
 		{
 		case 0:
-			pulse_values[chan_idx] = hTimer2.Init.Period * 0.25; // 25% Duty cycle.
+			pulse_values[chan_idx] = hTimer2.Init.Period * 0.0; // 0% Duty cycle.
 			break;
 		case 1:
 			pulse_values[chan_idx] = hTimer2.Init.Period * 0.45; // 45% Duty cycle.
@@ -440,11 +475,19 @@ static void TIM2_init( void )
 		}
 
 		tim_OC_channels_config.Pulse = pulse_values[chan_idx];
+#if 0
 		if ( HAL_TIM_PWM_ConfigChannel( &hTimer2, &tim_OC_channels_config, ( TIM_CHANNEL_1 + ( chan_idx * 4) ) ) != HAL_OK)
 		{
 			// Error in Timer channel configuration.
 			Error_Handler();
 		}
+#else
+		if ( HAL_TIM_PWM_ConfigChannel( &hTimer2, &tim_OC_channels_config, TIM_CHANNEL_2 ) != HAL_OK)
+		{
+			// Error in Timer channel configuration.
+			Error_Handler();
+		}
+#endif
 	}
 }
 #endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE or USE_PWM_TIMER_EXAMPLE

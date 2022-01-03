@@ -115,12 +115,15 @@ extern "C" void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 
 	/* Configure GPIO pins (PA0 (TIM2-CH1), PB3 (TIM2-CH2), PA2 (TIM2-CH3), PA3 (TIM2-CH4)) as Timer 2 output channels. */
 	GPIO_InitTypeDef tim2_ch_gpios{0};
+
 	tim2_ch_gpios.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3;
 	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
 	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
+#if 0
 	// Enable the clock for GPIOA.
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	HAL_GPIO_Init( GPIOA, &tim2_ch_gpios );
+#endif
 	tim2_ch_gpios.Pin = GPIO_PIN_3;
 	// Enable the clock for GPIOB.
 	__HAL_RCC_GPIOB_CLK_ENABLE();
