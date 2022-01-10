@@ -14,27 +14,26 @@ extern "C" void SysTick_Handler( void )
 	HAL_SYSTICK_IRQHandler();
 }
 
-#ifdef USE_UART_EXAMPLE
-/* This function handles USART3. */
-extern "C" void USART3_IRQHandler( void )
-{
-	// Invoke callback if it exists.
-	HAL_UART_IRQHandler( &huart3 );
-}
-#endif // USE_UART_EXAMPLE
-
-#ifdef USE_BASIC_TIMER_EXAMPLE
-extern "C" void TIM6_DAC_IRQHandler( void )
-{
-	// Invoke callback if it exists.
-	HAL_TIM_IRQHandler( &hTimer6 );
-}
-#endif // USE_BASIC_TIMER_EXAMPLE
-
-#if defined( USE_INPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE ) || defined( USE_PWM_TIMER_EXAMPLE )
+#if defined( USE_PWM_TIMER_EXAMPLE )
 extern "C" void TIM2_IRQHandler( void )
 {
 	// Invoke callback function.
 	HAL_TIM_IRQHandler( &hTimer2 );
 }
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE or USE_PWM_TIMER_EXAMPLE
+#endif // USE_PWM_TIMER_EXAMPLE
+
+#if defined( USE_ADC_EXAMPLE )
+/* ADC DMA Stream ISR. */
+extern "C" void DMA2_Stream4_IRQHandler( void )
+{
+	// Invoke Callback function.
+	HAL_DMA_IRQHandler( &hdma_adc1 );
+}
+#endif // USE_ADC_EXAMPLE
+
+/* User Button ISR. */
+extern "C" void EXTI15_10_IRQHandler(void)
+{
+	// Invoke Callback function.
+	HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_13 );
+}

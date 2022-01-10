@@ -1,10 +1,20 @@
-16:21:21 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
-make -j12 all 
+08:07:22 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI ****
+make -j16 all 
+arm-none-eabi-g++ "../Core/Src/main.cpp" -mcpu=cortex-m7 -std=gnu++14 -g3 -DDEBUG -DnUSE_BASIC_TIMER_EXAMPLE -DnUSE_INPUT_CAPTURE_TIMER_EXAMPLE -DnUSE_OUTPUT_CAPTURE_TIMER_EXAMPLE -DnUSE_PWM_TIMER_EXAMPLE -DUSE_ADC_EXAMPLE -DnUSE_HSE_EXAMPLE -DnUSE_PLL_EXAMPLE -DnUSE_UART_EXAMPLE -DUSE_HAL_DRIVER -DSTM32F767xx -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-g++ -o "NUCLEO-F767ZI.elf" @"objects.list"   -mcpu=cortex-m7 -T"D:\GitHub\ESW\Code\NUCLEO-F767ZI\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NUCLEO-F767ZI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: NUCLEO-F767ZI.elf
+ 
 arm-none-eabi-size   NUCLEO-F767ZI.elf 
+arm-none-eabi-objdump -h -S  NUCLEO-F767ZI.elf  > "NUCLEO-F767ZI.list"
+arm-none-eabi-objcopy  -O binary  NUCLEO-F767ZI.elf  "NUCLEO-F767ZI.bin"
    text	   data	    bss	    dec	    hex	filename
-  26108	    484	   1812	  28404	   6ef4	NUCLEO-F767ZI.elf
+  24732	    484	   1932	  27148	   6a0c	NUCLEO-F767ZI.elf
 Finished building: default.size.stdout
  
+Finished building: NUCLEO-F767ZI.bin
+ 
+Finished building: NUCLEO-F767ZI.list
+ 
 
-16:21:21 Build Finished. 0 errors, 0 warnings. (took 582ms)
+08:07:24 Build Finished. 0 errors, 0 warnings. (took 2s.75ms)
 
