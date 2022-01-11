@@ -32,6 +32,8 @@ static std::uint32_t pulse_values[ PWM_CHANNELS ];
 std::uint16_t adcSamples[16];
 #endif // USE_ADC_EXAMPLE
 
+static std::int8_t button_press_cnt{3};
+
 void Error_Handler( void );
 
 #if defined( USE_PWM_TIMER_EXAMPLE )
@@ -41,6 +43,7 @@ static void TIM2_init( void );
 #if defined( USE_ADC_EXAMPLE )
 static void DMA2_init( void );
 static void ADC1_init( void );
+static void Button_init( void );
 #endif // USE_ADC_EXAMPLE
 
 static void SystemClock_Config( void );
@@ -56,6 +59,11 @@ int main( void )
 
 	// Initialize UART debug console.
 	UART3_Init();
+
+#if defined( USE_ADC_EXAMPLE )
+	// User button init.
+	Button_init();
+#endif // USE_ADC_EXAMPLE
 
 #if defined( USE_PWM_TIMER_EXAMPLE )
 	TIM2_init();
@@ -119,11 +127,20 @@ extern "C" void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 /* User Button Press Callback Function. */
 extern "C" void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 {
-	// Start the ADC conversion when User button is Pressed.
-	if ( HAL_ADC_Start_DMA( &hadc1, (std::uint32_t *)adcSamples, 16 ) != HAL_OK )
+	// Handle Button debouncing
+	if (button_press_cnt > 0)
 	{
-		// Error in ADC Start.
-		Error_Handler();
+		button_press_cnt--;
+	}
+
+	if (button_press_cnt <= 0)
+	{
+		// Start the ADC conversion when User button is Pressed.
+		if ( HAL_ADC_Start_DMA( &hadc1, (std::uint32_t *)adcSamples, 16 ) != HAL_OK )
+		{
+			// Error in ADC Start.
+			Error_Handler();
+		}
 	}
 }
 
@@ -131,6 +148,7 @@ extern "C" void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 /* ADC DMA Stream ISR Callback Function. */
 void HAL_ADC_ConvCpltCallback( ADC_HandleTypeDef* hadc )
 {
+	button_press_cnt = 3;
 
 }
 #endif // USE_ADC_EXAMPLE
@@ -289,4 +307,21 @@ static void ADC1_init( void )
 		Error_Handler();
 	}
 }
+
+static void Button_init( void )
+{
+	GPIO_InitTypeDef user_Button_Pin_Config{0};
+	user_Button_Pin_Config.Pin = GPIO_PIN_13;
+	user_Button_Pin_Config.Mode = GPIO_MODE_IT_RISING;
+	user_Button_Pin_Config.Pull = GPIO_PULLDOWN;
+	user_Button_Pin_Config.Speed = GPIO_SPEED_FREQ_LOW;
+
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	HAL_GPIO_Init( GPIOC, &user_Button_Pin_Config );
+
+	// Configure User Button interrupt.
+	HAL_NVIC_SetPriority( EXTI15_10_IRQn, 15U, 0U );
+	HAL_NVIC_EnableIRQ( EXTI15_10_IRQn );
+}
+
 #endif // USE_ADC_EXAMPLE
