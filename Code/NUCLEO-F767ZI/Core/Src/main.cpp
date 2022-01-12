@@ -149,7 +149,6 @@ extern "C" void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 void HAL_ADC_ConvCpltCallback( ADC_HandleTypeDef* hadc )
 {
 	button_press_cnt = 3;
-
 }
 #endif // USE_ADC_EXAMPLE
 
