@@ -1,0 +1,10 @@
+16:33:05 **** Incremental Build of configuration Debug for project NUCLEO-F767ZI-PWM ****
+make -j12 all 
+arm-none-eabi-size   NUCLEO-F767ZI-PWM.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15300	     20	   1780	  17100	   42cc	NUCLEO-F767ZI-PWM.elf
+Finished building: default.size.stdout
+ 
+
+16:33:05 Build Finished. 0 errors, 0 warnings. (took 707ms)
+
