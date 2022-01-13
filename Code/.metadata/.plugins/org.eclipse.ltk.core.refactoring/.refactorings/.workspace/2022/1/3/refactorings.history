@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete 3 resources" deleteContents="false" description="Delete 3 resources" element1="/NUCLEO-F767ZI/Core/Src/main.c" element2="/NUCLEO-F767ZI/Core/Src/stm32f7xx_hal_msp.c" element3="/NUCLEO-F767ZI/Core/Src/stm32f7xx_it.c" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="3" stamp="1641971316166"/>&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/NUCLEO-F767ZI/Core/Src/syscalls.c" element2="/NUCLEO-F767ZI/Core/Src/sysmem.c" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1641971323400"/>
+</session>

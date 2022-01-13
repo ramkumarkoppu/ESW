@@ -46,84 +46,17 @@ extern "C" void HAL_UART_MspInit( UART_HandleTypeDef *huart )
 	HAL_NVIC_EnableIRQ( USART3_IRQn );
 }
 
-#ifdef USE_BASIC_TIMER_EXAMPLE
-extern "C" void HAL_TIM_Base_MspInit( TIM_HandleTypeDef *htim )
-{
-	// Enable the clock for the TIM6.
-	__HAL_RCC_TIM6_CLK_ENABLE();
-
-	// Enable TIM6 IRQ.
-	HAL_NVIC_SetPriority( TIM6_DAC_IRQn, 15, 0 );
-	HAL_NVIC_EnableIRQ( TIM6_DAC_IRQn );
-#endif // USE_BASIC_TIMER_EXAMPLE
-
-#ifdef USE_INPUT_CAPTURE_TIMER_EXAMPLE
-extern "C" void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim)
-{
-	// Enable the clock for the TIM2.
-	__HAL_RCC_TIM2_CLK_ENABLE();
-
-	// Configure GPIO pin PA0 as Timer 2 input channel.
-	GPIO_InitTypeDef tim2_ch1_gpio{0};
-	tim2_ch1_gpio.Pin = GPIO_PIN_0;
-	tim2_ch1_gpio.Mode = GPIO_MODE_AF_PP;
-	tim2_ch1_gpio.Alternate = GPIO_AF1_TIM2;
-	// Enable the Clock for GPIOA.
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	HAL_GPIO_Init( GPIOA, &tim2_ch1_gpio );
-
-	// Enable TIM2 IRQ.
-	HAL_NVIC_SetPriority( TIM2_IRQn, 15, 0 );
-	HAL_NVIC_EnableIRQ( TIM2_IRQn );
-}
-#endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE
-
-#if defined( USE_OUTPUT_CAPTURE_TIMER_EXAMPLE )
-extern "C" void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim)
-{
-	// Enable the clock for the TIM2.
-	__HAL_RCC_TIM2_CLK_ENABLE();
-
-	/* Configure GPIO pins (PA0 (TIM2-CH1), PB3 (TIM2-CH2), PA2 (TIM2-CH3), PA3 (TIM2-CH4)) as Timer 2 output channels. */
-	GPIO_InitTypeDef tim2_ch_gpios{0};
-	tim2_ch_gpios.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3;
-	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
-	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
-	// Enable the Clock for GPIOA.
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	HAL_GPIO_Init( GPIOA, &tim2_ch_gpios );
-
-	std::memset( &tim2_ch_gpios, 0, sizeof(tim2_ch_gpios) );
-	tim2_ch_gpios.Pin = GPIO_PIN_3;
-	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
-	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
-	// Enable the Clock for GPIOB.
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	HAL_GPIO_Init( GPIOB, &tim2_ch_gpios );
-
-	// Enable TIM2 IRQ.
-	HAL_NVIC_SetPriority( TIM2_IRQn, 15, 0 );
-	HAL_NVIC_EnableIRQ( TIM2_IRQn );
-}
-#endif // USE_OUTPUT_CAPTURE_TIMER_EXAMPLE
-
 #if defined( USE_PWM_TIMER_EXAMPLE )
 extern "C" void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
 	/* Enable Clock for TIM2. */
 	__HAL_RCC_TIM2_CLK_ENABLE();
 
-	/* Configure GPIO pins (PA0 (TIM2-CH1), PB3 (TIM2-CH2), PA2 (TIM2-CH3), PA3 (TIM2-CH4)) as Timer 2 output channels. */
+	/* Configure GPIO pins PB3 (TIM2-CH2) as Timer 2 output channel. */
 	GPIO_InitTypeDef tim2_ch_gpios{0};
 
-	tim2_ch_gpios.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3;
 	tim2_ch_gpios.Mode = GPIO_MODE_AF_PP;
 	tim2_ch_gpios.Alternate = GPIO_AF1_TIM2;
-#if 0
-	// Enable the clock for GPIOA.
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	HAL_GPIO_Init( GPIOA, &tim2_ch_gpios );
-#endif
 	tim2_ch_gpios.Pin = GPIO_PIN_3;
 	// Enable the clock for GPIOB.
 	__HAL_RCC_GPIOB_CLK_ENABLE();
@@ -135,4 +68,35 @@ extern "C" void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 }
 #endif // USE_PWM_TIMER_EXAMPLE
 
+#if defined( USE_ADC_EXAMPLE )
+extern "C" void HAL_ADC_MspInit( ADC_HandleTypeDef* hadc )
+{
+	if ( hadc->Instance == ADC1 )
+	{
+		// Enable Clock for ADC1.
+		__HAL_RCC_ADC1_CLK_ENABLE();
 
+		hdma_adc1.Instance = DMA2_Stream4;
+	    hdma_adc1.Init.Channel = DMA_CHANNEL_0;
+	    hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
+	    hdma_adc1.Init.PeriphInc = DMA_PINC_DISABLE;
+	    hdma_adc1.Init.MemInc = DMA_MINC_ENABLE;
+	    hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+	    hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+	    hdma_adc1.Init.Mode = DMA_NORMAL;
+	    hdma_adc1.Init.Priority = DMA_PRIORITY_LOW;
+	    hdma_adc1.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+	    hdma_adc1.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+	    hdma_adc1.Init.MemBurst = DMA_MBURST_SINGLE;
+	    hdma_adc1.Init.PeriphBurst = DMA_PBURST_SINGLE;
+
+		if ( HAL_DMA_Init( &hdma_adc1 ) != HAL_OK )
+		{
+			// Error in DMA configuration for ADC1.
+			Error_Handler();
+		}
+
+		__HAL_LINKDMA( hadc, DMA_Handle, hdma_adc1 );
+	}
+}
+#endif // USE_ADC_EXAMPLE

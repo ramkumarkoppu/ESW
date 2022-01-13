@@ -59,7 +59,8 @@
 									<listOptionValue builtIn="false" value="nUSE_BASIC_TIMER_EXAMPLE"/>
 									<listOptionValue builtIn="false" value="nUSE_INPUT_CAPTURE_TIMER_EXAMPLE"/>
 									<listOptionValue builtIn="false" value="nUSE_OUTPUT_CAPTURE_TIMER_EXAMPLE"/>
-									<listOptionValue builtIn="false" value="USE_PWM_TIMER_EXAMPLE"/>
+									<listOptionValue builtIn="false" value="nUSE_PWM_TIMER_EXAMPLE"/>
+									<listOptionValue builtIn="false" value="USE_ADC_EXAMPLE"/>
 									<listOptionValue builtIn="false" value="nUSE_HSE_EXAMPLE"/>
 									<listOptionValue builtIn="false" value="nUSE_PLL_EXAMPLE"/>
 									<listOptionValue builtIn="false" value="nUSE_UART_EXAMPLE"/>
@@ -224,5 +225,12 @@
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/NUCLEO-F767ZI"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/NUCLEO-F767ZI"/>
+		</configuration>
+	</storageModule>
 </cproject>

@@ -30,6 +30,13 @@ extern TIM_HandleTypeDef hTimer6;
 extern TIM_HandleTypeDef hTimer2;
 #endif // USE_INPUT_CAPTURE_TIMER_EXAMPLE or USE_OUTPUT_CAPTURE_TIMER_EXAMPLE or USE_PWM_TIMER_EXAMPLE
 
+#if defined( USE_ADC_EXAMPLE )
+extern ADC_HandleTypeDef hadc1;
+extern DMA_HandleTypeDef hdma_adc1;
+#endif // USE_ADC_EXAMPLE
+
+void Error_Handler( void );
+
 #ifdef __cplusplus
 }
 #endif
